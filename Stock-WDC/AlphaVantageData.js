@@ -31,7 +31,7 @@
             }];
 
             var tableSchema = {
-                id: "timeSeriesDaily",
+                id: "timeSeriesMonthly",
                 alias: tableau.connectionData,
                 columns: cols
             };
@@ -40,46 +40,29 @@
         };
 
         myConnector.getData = function (table, doneCallback) {
-            const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + tableau.connectionData + '&apikey=TTZNA7B3VCDYYHNZ&datatype=json'
+            const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=' + tableau.connectionData + '&apikey=TTZNA7B3VCDYYHNZ'
             //const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey=QYOWP5SXIHB6BV3X'
 
-            $.getJSON(url, function (data) {
-                    var obj = JSON.parse(data);
+            $.getJSON(url,function (data) {
+                    const obj = data['Monthly Time Series'];
                     var tableData = [];
-                    for (var i = 0; i < obj.length; i++) {
+                    const len = Object.keys(obj);
+
+                    for (var i = 0; i < len; i++) {
                         var ref = obj[i];
 
                         tableData.push({
-                            "open": ref.open,
-                            "high": ref.high,
-                            "low": ref.low,
-                            "close": ref.close,
-                            "volume": ref.volume
+                            "open": ref["1. open"],
+                            "high": ref["2. high"],
+                            "low": ref["3. low"],
+                            "close": ref["4. close"],
+                            "volum": ref["5. volume"]
                         });
                     }
                     table.appendRows(tableData);
                     doneCallback();
-            });
+                });
         };
-        //     $.getJSON(url, function (resp {
-        //
-        //         resp = resp.json();
-        //         const feat = resp['Monthly Time Series'];
-        //         var tableData = [];
-        //
-        //         for (var i = 0, len = Object.keys(feat).length; i < len; i++) {
-        //             tableData.push({
-        //                 "open": feat[i].open,
-        //                 "high": feat[i].high,
-        //                 "low": feat[i].low,
-        //                 "close": feat[i].close,
-        //                 "volume": feat[i].volume
-        //             });
-        //         }
-        //         table.appendRows(tableData);
-        //         doneCallback();
-        //     });
-        // };
         //     $.ajax({
         //         dataType: "json",
         //         url: url,
