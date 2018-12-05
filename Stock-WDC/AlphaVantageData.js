@@ -44,51 +44,28 @@
             //const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey=QYOWP5SXIHB6BV3X'
 
             $.getJSON(url,function (data) {
-                    const obj = data['Monthly Time Series'];
-                    var tableData = [];
-                    const len = Object.keys(obj);
+                const monthlyTimeSeries = data['Monthly Time Series'];
+                var tableData = [];
+                const keys = Object.keys(monthlyTimeSeries);
 
-                    for (var i = 0; i < len; i++) {
-                        var ref = obj[i];
+                for (var i = 0; i < keys.length; i++) {
+                    var month = keys[i];
+                    var monthlyData = monthlyTimeSeries[month];
 
-                        tableData.push({
-                            "open": ref["1. open"],
-                            "high": ref["2. high"],
-                            "low": ref["3. low"],
-                            "close": ref["4. close"],
-                            "volum": ref["5. volume"]
-                        });
-                    }
-                    table.appendRows(tableData);
-                    doneCallback();
-                });
+                    tableData.push({
+                        "open": monthlyData['1. open'],
+                        "high": monthlyData['2. high'],
+                        "low": monthlyData['3. low'],
+                        "close": monthlyData['4. close'],
+                        "volume": monthlyData['5. volume'],
+                        "date": month
+                    });
+                }
+
+                table.appendRows(tableData);
+                doneCallback();
+            });
         };
-        //     $.ajax({
-        //         dataType: "json",
-        //         url: url,
-        //         data: {},
-        //         success: function(data) {
-        //             const allRows = []
-        //             const timeSeries = data['Time Series (Daily)']
-        //             const keys = Object.keys(timeSeries)
-        //             for (var i = 0 ; i < keys.length ; i++) {
-        //                 const key = keys[i]
-        //                 const actual = timeSeries[key]
-        //                 const expected = {}
-        //                 expected.open = actual['1. open'] ? actual['1. open'] : '--'
-        //                 expected.high = actual['2. high'] ? actual['2. high'] : '--'
-        //                 expected.low = actual['3. low'] ? actual['3. low'] : '--'
-        //                 expected.close = actual['4. close'] ? actual['4. close'] : '--'
-        //                 expected.volume = actual['5. volume'] ? actual['5. volume'] : '--'
-        //                 expected.date = key
-        //                 allRows.push(expected)
-        //                 }
-        //
-        //             table.appendRows(allRows)
-        //             doneCallback();
-        //         }
-        //     });
-        // };
 
         tableau.registerConnector(myConnector);
 
