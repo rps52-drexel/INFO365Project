@@ -6,32 +6,32 @@
         myConnector.getSchema = function (schemaCallback) {
             var cols = [{
                 id: "open",
-                alias: "Open",
+                alias: tableau.connectionData + " Open",
                 dataType: tableau.dataTypeEnum.string
             }, {
                 id: "high",
-                alias: "High",
+                alias: tableau.connectionData + " High",
                 dataType: tableau.dataTypeEnum.string
             }, {
                 id: "date",
-                alias: "Date",
+                alias: tableau.connectionData + " Date",
                 dataType: tableau.dataTypeEnum.date
             }, {
                 id: "low",
-                alias: "Low",
+                alias: tableau.connectionData + " Low",
                 dataType: tableau.dataTypeEnum.string
             }, {
                 id: "close",
-                alias: "Close",
+                alias: tableau.connectionData + " Close",
                 dataType: tableau.dataTypeEnum.string
             }, {
                 id: "volume",
-                alias: "Volume",
+                alias: tableau.connectionData + " Volume",
                 dataType: tableau.dataTypeEnum.string
             }];
 
             var tableSchema = {
-                id: "timeSeriesMonthly",
+                id: "timeSeriesWeekly",
                 alias: tableau.connectionData,
                 columns: cols
             };
@@ -40,25 +40,24 @@
         };
 
         myConnector.getData = function (table, doneCallback) {
-            const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=' + tableau.connectionData + '&apikey=TTZNA7B3VCDYYHNZ'
-            //const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey=QYOWP5SXIHB6BV3X'
+            const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=' + tableau.connectionData + '&outputsize=full&apikey=TTZNA7B3VCDYYHNZ'
 
             $.getJSON(url,function (data) {
-                const monthlyTimeSeries = data['Monthly Time Series'];
+                const weeklyTimeSeries = data['Weekly Time Series'];
                 var tableData = [];
-                const keys = Object.keys(monthlyTimeSeries);
+                const keys = Object.keys(weeklyTimeSeries);
 
                 for (var i = 0; i < keys.length; i++) {
-                    var month = keys[i];
-                    var monthlyData = monthlyTimeSeries[month];
+                    var date = keys[i];
+                    var weeklyData = weeklyTimeSeries[date];
 
                     tableData.push({
-                        "open": monthlyData['1. open'],
-                        "high": monthlyData['2. high'],
-                        "low": monthlyData['3. low'],
-                        "close": monthlyData['4. close'],
-                        "volume": monthlyData['5. volume'],
-                        "date": month
+                        "open": weeklyData['1. open'],
+                        "high": weeklyData['2. high'],
+                        "low": weeklyData['3. low'],
+                        "close": weeklyData['4. close'],
+                        "volume": weeklyData['5. volume'],
+                        "date": date
                     });
                 }
 
@@ -70,7 +69,7 @@
         tableau.registerConnector(myConnector);
 
         $("#submitButton").click(function () {
-            tableau.connectionData = $("#submitSymbol").val();
+            tableau.connectionData = $("#ticker").val();
 
             tableau.connectionName = tableau.connectionData;
             tableau.submit();

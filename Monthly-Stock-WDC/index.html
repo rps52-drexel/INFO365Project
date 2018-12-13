@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <title>Alpha Vantage Data</title>
+    <meta http-equiv="Cache-Control" content="no-store" />
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://connectors.tableau.com/libs/tableauwdc-2.3.latest.js" type="text/javascript"></script>
+    <script src="MonthlyStockData.js" type="text/javascript"></script>
+</head>
+<script>
+    function autoComplete() {
+        const input = document.getElementById('submitSymbol').value;
+        const url = 'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=' + input + '&apikey=TTZNA7B3VCDYYHNZ';
+
+        console.log('hello');
+        $.getJSON(url, function (data) {
+            var tickerList = [];
+            const bestMatches = data.bestMatches;
+            bestMatches.forEach(function (tickerInfo) {
+                var option = document.createElement('option');
+                console.log(option);
+                option.value = tickerInfo['1. symbol'];
+                tickerList.push(option.value);
+            });
+            $("#submitSymbol").autocomplete({
+                source: tickerList
+            });
+        });
+    }
+</script>
+
+<body>
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+            <div class="text-center col-md-4 col-md-offset-4">
+                <label>Enter Stock Symbol</label>
+                <input type="text" id="ticker" placeholder="e.g. MMM" onkeypress="autoComplete()" class="form-control autocomplete=">
+            </div>
+        </div>
+        <div class="row vertical-center-row">
+            <div class="text-center col-md-4 col-md-offset-4">
+                <button type="button" id="submitButton" class="btn btn-success" style="margin: 10px;">Get Monthly Stock Data</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
