@@ -14,19 +14,26 @@
 </head>
 <script>
     function autoComplete() {
-        const input = document.getElementById('submitSymbol').value;
+        var input;
+        if (document.getElementById('submitSymbol') === null) {
+            input = " ";
+        } else {
+            input = document.getElementById('submitSymbol').value;
+        }
         const url = 'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=' + input + '&apikey=TTZNA7B3VCDYYHNZ';
 
         console.log('hello');
         $.getJSON(url, function (data) {
             var tickerList = [];
-            const bestMatches = data.bestMatches;
-            bestMatches.forEach(function (tickerInfo) {
-                var option = document.createElement('option');
-                console.log(option);
-                option.value = tickerInfo['1. symbol'];
-                tickerList.push(option.value);
-            });
+            if (data !== null || data !== undefined) {
+                const bestMatches = data.bestMatches;
+                bestMatches.forEach(function (tickerInfo) {
+                    var option = document.createElement('option');
+                    console.log(option);
+                    option.value = tickerInfo['1. symbol'];
+                    tickerList.push(option.value);
+                });
+            }
             $("#submitSymbol").autocomplete({
                 source: tickerList
             });
